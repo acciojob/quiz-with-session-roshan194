@@ -1,17 +1,97 @@
 <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Quiz</title>
+</head>
+<body>
+  <h1>Quiz</h1>
+  <div id="questions"></div>
+  <button id="submit">Submit</button>
+  <div id="score"></div>
+  <script>
+    const questions = [
+  {
+    question: "What is the capital of France?",
+    options: ["Paris", "Berlin", "Madrid", "Rome"],
+    correct: 0
+  },
+  {
+    question: "What is 2 + 2?",
+    options: ["3", "4", "5", "22"],
+    correct: 1
+  },
+  {
+    question: "Which language runs in the browser?",
+    options: ["Java", "Python", "C", "JavaScript"],
+    correct: 3
+  },
+  {
+    question: "Which tag is used to create a link in HTML?",
+    options: ["<link>", "<a>", "<href>", "<src>"],
+    correct: 1
+  },
+  {
+    question: "CSS stands for?",
+    options: [
+      "Cascading Style Sheets",
+      "Computer Style Sheets",
+      "Colorful Style Sheets",
+      "Creative Style Sheets"
+    ],
+    correct: 0
+  }
+];
 
-<html>
-  <head>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
+const questionsContainer = document.getElementById("questions");
+const submitBtn = document.getElementById("submit");
+const scoreDisplay = document.getElementById("score");
 
-  <body>
-    <!-- do not change this code -->
-    <h1>Quiz</h1>
-    <div id="questions"></div>
-    <button id="submit">Submit</button>
-    <div id="score"></div>
+// Load progress from sessionStorage
+let progress = JSON.parse(sessionStorage.getItem("progress")) || {};
 
-    <script type="text/javascript" src="./script.js"></script>
-  </body>
+// Render Questions
+questions.forEach((q, index) => {
+  const qDiv = document.createElement("div");
+  qDiv.innerHTML = `<p>${q.question}</p>`;
+  q.options.forEach((opt, optIndex) => {
+    const id = `q${index}_opt${optIndex}`;
+    const isChecked =
+      progress[index] !== undefined && progress[index] === optIndex;
+
+    qDiv.innerHTML += `
+      <label>
+        <input type="radio" name="q${index}" value="${optIndex}" 
+        ${isChecked ? "checked" : ""}>
+        ${opt}
+      </label><br/>
+    `;
+  });
+  questionsContainer.appendChild(qDiv);
+});
+
+// Listen for selection and update sessionStorage
+questionsContainer.addEventListener("change", (e) => {
+  const name = e.target.name; // q0, q1...
+  const qIndex = parseInt(name.replace("q", ""));
+  const selected = parseInt(e.target.value);
+  progress[qIndex] = selected;
+  sessionStorage.setItem("progress", JSON.stringify(progress));
+});
+
+// Handle submission
+submitBtn.addEventListener("click", () => {
+  let score = 0;
+  questions.forEach((q, i) => {
+    if (progress[i] === q.correct) {
+      score++;
+    }
+  });
+  scoreDisplay.innerText = `Your score is ${score} out of ${questions.length}.`;
+  localStorage.setItem("score", score);
+});
+
+</script>
+</body>
 </html>
