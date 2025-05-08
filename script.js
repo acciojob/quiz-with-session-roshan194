@@ -53,10 +53,11 @@ function renderQuestions() {
       choiceElement.setAttribute("name", `question-${i}`);
       choiceElement.setAttribute("value", choice);
 
-      // Restore saved answer from sessionStorage
       if (userAnswers[i] === choice) {
-        choiceElement.checked = true;
-      }
+		  choiceElement.checked = true;
+		  choiceElement.setAttribute("checked", "true"); // Ensures Cypress sees it
+		}
+
 
       // Add change listener to save progress on selection
       choiceElement.addEventListener("change", () => {
